@@ -45,6 +45,7 @@ Overall project plan
 
 Deliverables Timeline
 Date |Hardware| Software|
+|----|--------|---------|
 02/05/2018|Basic Plan|
           |Test Boards|
           |Sketches|
