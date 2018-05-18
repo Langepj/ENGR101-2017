@@ -2,12 +2,12 @@
 #include <time.h>
 #include "E101.h"
 
-#define CAMERA_MAX_X 319
+#define CAMERA_MAX_X 320
 #define CAMERA_MAX_Y  240
 #define LEFT_MOTOR_PIN 1
-#define LEFT_MOTOR_OFFSET  1.5 //decimal multipliers to balance motor speed.
+#define LEFT_MOTOR_OFFSET  0.75 //decimal multipliers to balance motor speed.
 #define RIGHT_MOTOR_PIN 2
-#define RIGHT_MOTOR_OFFSET 1.68
+#define RIGHT_MOTOR_OFFSET 0.84
 
 void move_back();
 
@@ -17,8 +17,8 @@ int get_direction_from_camera(int white_threshold){
 	take_picture();
 
 	for(int x = 0; x < CAMERA_MAX_X; x++){
-		for(int y = CAMERA_MAX_Y / 4; y < (CAMERA_MAX_Y / 4) * 3; y++){
-			int pix = get_pixel(y, x, 3);
+		for(int i = 0; i <= 10; i++){
+			int pix = get_pixel(115 + i, x, 3);
 			if(pix > white_threshold) white_count++;
 			if(x > (CAMERA_MAX_X / 2) )
 				err += pix;
@@ -26,8 +26,9 @@ int get_direction_from_camera(int white_threshold){
 				err -= pix;
 		}
  	}
-	return white_count < 10000  ? (err/white_count) % 256 : -500; //normalized value
+	return whitecount > 32 && whitecount < 2000 ? (err/white_count) % 255 : -500; //normalized value
 }
+
 
 bool scan_right(int white_threshold){
 	int err = 0, white_count = 0;
@@ -101,38 +102,57 @@ int main(){
         init();
         int white_threshold = calculate_white_threshold();
         int direction = 0, i = 0;
-        int quadrant = 1;
+        int quadrant = 0;
 
         while(1){
-			if(quadrant = 0){
-				connect_to_server();
+			if(quadrant == 0){
+				connect_to_server("130.195.6.196", 1024);
 				send_to_server("Please");
-				char pwd[24](recieve_from_server());
+				char pwd[24];
+				receive_from_server(pwd);
 				send_to_server(pwd);
-				sleep1(1,0);
+				sleep1(0, 5000);
 				quadrant++;
 				
 			}
-			if(quadrant = 1){
+			if(quadrant == 1){
 				direction =  get_direction_from_camera(white_threshold);
-				if(direction == -500){
-					quadrant++;
-					continue;
+			    if(direction == -500){
+				quadrant++;
 				}
-                adjust_heading(direction);
+			    adjust_heading(direction);
                 move_forward();
                 
+                
 			}
-			if(quadrant = 2){
+			
+			if(quadrant == 2){
+				//check if there is a right turn
+				if(scan_right()){
+					move_forward();
+					while(direction > 0)
+						adjust_heading(255);
+				}
+				if(direction == -500){
+					while(direction > 0)
+						adjust_heading(255);
+				}
+				//if you encounter a dead end rotate 180 degrees
+				
+				// follow the line
+				
+				
+				
 				break;
 			}
-			if(quadrant = 3){
+			if(quadrant == 3){
 				break;
 			}
           }
 
         return 0;
 }
+
 
 
 
