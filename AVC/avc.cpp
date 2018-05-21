@@ -29,21 +29,23 @@ int get_direction_from_camera(int white_threshold){
 	return whitecount > 32 && whitecount < 2000 ? (err/white_count) % 255 : -500; //normalized value
 }
 
-
-bool scan_right(int white_threshold){
-	int err = 0, white_count = 0;
-
-	take_picture();
-
-	for(int x = CAMERA_MAX_X/2; x < CAMERA_MAX_X; x++){
-		for(int y = CAMERA_MAX_Y / 4; y < (CAMERA_MAX_Y / 4) * 3; y++){
-			int pix = get_pixel(y, x, 3);
-			if(pix > white_threshold) white_count++;
+int get_direction _from_maze_position(int white_threshold){
+		take picture();
+		
+		if(get_pixel(10,  160, 3)> white_threshold)
+			return 0;
 			
-		}
- 	}
-	return white_count > 5000;
+		if(get_pixel(110,  5, 3) > white_threshold)
+			return -255;
+		
+		if(get_pixel(110,  315, 3) > white_threshold)
+			return 255;
+		
+		else return get_direction_from_camera(white_threshold);	
+		
 }
+
+
 
 void left_motor(int speed){
         //Set left motor speed accounting for offset
@@ -127,29 +129,17 @@ int main(){
 			}
 			
 			if(quadrant == 2){
-				//check if there is a right turn
-				if(scan_right()){
-					move_forward();
-					while(direction > 0)
-						adjust_heading(255);
+				direction =  get_direction_from_maze_position(white_threshold);
+			    if(direction == -500){
+				quadrant++;
 				}
-				if(direction == -500){
-					while(direction > 0)
-						adjust_heading(255);
-				}
-				//if you encounter a dead end rotate 180 degrees
-				
-				// follow the line
-				
-				
-				
-				break;
+			    adjust_heading(direction);
+                move_forward();
 			}
 			if(quadrant == 3){
 				break;
 			}
           }
-
         return 0;
 }
 
