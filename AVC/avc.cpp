@@ -32,8 +32,8 @@ int get_direction_from_camera(int white_threshold){
 	 if white_count < 2000 ? (err/white_count) % 255 : 500; //normalized value
 }
 
-int get_direction _from_maze_position(int white_threshold){
-		take picture();
+int get_direction_from_maze_position(int white_threshold){
+		take_picture();
 		
 		if(get_pixel(10,  160, 3)> white_threshold)
 			return 0;
