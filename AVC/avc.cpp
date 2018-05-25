@@ -4,9 +4,9 @@
 
 #define CAMERA_MAX_X 319
 #define CAMERA_MAX_Y  239
-#define LEFT_MOTOR_PIN 1
-#define LEFT_MOTOR_OFFSET  1 //decimal multipliers to balance motor speed.
-#define RIGHT_MOTOR_PIN 2
+#define LEFT_MOTOR_PIN 2
+#define LEFT_MOTOR_OFFSET  0.95 //decimal multipliers to balance motor speed.
+#define RIGHT_MOTOR_PIN 1
 #define RIGHT_MOTOR_OFFSET 1
 #define HARD_TURN 255
 
@@ -18,7 +18,7 @@ int get_direction_from_camera(int white_threshold){
 	take_picture();
 
 	for(int x = 0; x < CAMERA_MAX_X; x++){
-		for(int i = 0; i <= 10; i++){
+		for(int i = 0; i <= 3; i++){
 			int pix = get_pixel(115 + i, x, 3);
 			if(pix > white_threshold) white_count++;
 			if(x > (CAMERA_MAX_X / 2) )
@@ -29,7 +29,7 @@ int get_direction_from_camera(int white_threshold){
  	}
 	if(white_count < 32)
 		return -500;
-	 if white_count < 2000 ? (err/white_count) % 255 : 500; //normalized value
+	 return white_count < 720 ? (err/white_count) % 255 : 500; //normalized value
 }
 
 int get_direction_from_maze_position(int white_threshold){
@@ -86,7 +86,7 @@ void move_forward(){
 void move_back(){
 		left_motor(-200);
 		right_motor(-200);
-		sleep1( 0 ,10000);
+		sleep1( 0 ,20000);
 		dead_stop();
 }
 
@@ -124,8 +124,10 @@ int main(){
 				direction =  get_direction_from_camera(white_threshold);
 			    if(direction == 500){
 				quadrant++;
+				move_forward();
 				}
 				else if( direction == -500){
+					dead_stop();
 					move_back();
 				}
 				else{
@@ -138,9 +140,10 @@ int main(){
 			if(quadrant == 2){
 				direction =  get_direction_from_maze_position(white_threshold);
 			     if(direction == 500){
-				quadrant++;
+				move_forward();
 				}
 				else if( direction == -500){
+					dead_stop();
 					move_back();
 				}
 				else
