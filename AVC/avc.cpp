@@ -27,7 +27,7 @@ int get_direction_from_camera(int white_threshold){
 				err -= pix;
 		}
  	}
-	if(white_count > 32)
+	if(white_count < 32)
 		return -500;
 	 if white_count < 2000 ? (err/white_count) % 255 : 500; //normalized value
 }
