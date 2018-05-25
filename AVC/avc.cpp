@@ -122,10 +122,10 @@ int main(){
 			}
 			if(quadrant == 1){
 				direction =  get_direction_from_camera(white_threshold);
-			    if(direction == -500){
+			    if(direction == 500){
 				quadrant++;
 				}
-				else if( direction == 500){
+				else if( direction == -500){
 					move_back();
 				}
 				else{
@@ -137,8 +137,11 @@ int main(){
 			
 			if(quadrant == 2){
 				direction =  get_direction_from_maze_position(white_threshold);
-			    if(direction == -500){
-					quadrant++;
+			     if(direction == 500){
+				quadrant++;
+				}
+				else if( direction == -500){
+					move_back();
 				}
 				else
 					adjust_heading(direction);
