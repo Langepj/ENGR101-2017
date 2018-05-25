@@ -2,12 +2,13 @@
 #include <time.h>
 #include "E101.h"
 
-#define CAMERA_MAX_X 320
-#define CAMERA_MAX_Y  240
+#define CAMERA_MAX_X 319
+#define CAMERA_MAX_Y  239
 #define LEFT_MOTOR_PIN 1
-#define LEFT_MOTOR_OFFSET  0.75 //decimal multipliers to balance motor speed.
+#define LEFT_MOTOR_OFFSET  1 //decimal multipliers to balance motor speed.
 #define RIGHT_MOTOR_PIN 2
-#define RIGHT_MOTOR_OFFSET 0.84
+#define RIGHT_MOTOR_OFFSET 1
+#define HARD_TURN 255
 
 void move_back();
 
@@ -26,7 +27,9 @@ int get_direction_from_camera(int white_threshold){
 				err -= pix;
 		}
  	}
-	return whitecount > 32 && whitecount < 2000 ? (err/white_count) % 255 : -500; //normalized value
+	if(white_count > 32)
+		return -500;
+	 if white_count < 2000 ? (err/white_count) % 255 : 500; //normalized value
 }
 
 int get_direction _from_maze_position(int white_threshold){
@@ -122,19 +125,24 @@ int main(){
 			    if(direction == -500){
 				quadrant++;
 				}
-			    adjust_heading(direction);
-                move_forward();
-                
+				else if( direction == 500){
+					move_back();
+				}
+				else{
+					adjust_heading(direction);
+					move_forward();
+				}
                 
 			}
 			
 			if(quadrant == 2){
 				direction =  get_direction_from_maze_position(white_threshold);
 			    if(direction == -500){
-				quadrant++;
+					quadrant++;
 				}
-			    adjust_heading(direction);
-                move_forward();
+				else
+					adjust_heading(direction);
+					move_forward();
 			}
 			if(quadrant == 3){
 				break;
